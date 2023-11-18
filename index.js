@@ -2,6 +2,15 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs'); // Importing the File System module
 const app = express();
+const { logger , search } = require('./routes');
+
+// for ingestion of the log files
+
+app.use(express.json()); // Add this line to parse JSON request bodies
+
+app.post('/log', logger); 
+app.get('/search', search); 
+
 
 // Serve API requests from /api
 app.get('/api', (req, res) => {
