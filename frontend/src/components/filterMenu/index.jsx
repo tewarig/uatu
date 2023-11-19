@@ -9,7 +9,7 @@ const convertToUnixTimeStamp = (date) => {
 }
 const FilterMenu = ({ searchValue, filters, setFilters , fetchOnButtonClick}) => (
   <Menu
-    style={{ width: 300 , borderRadius: `8px` , padding: '8px' , height: "500px" }}
+    style={{ width: 320 , borderRadius: `8px` , padding: '16px' , height: "500px" }}
     defaultSelectedKeys={['1']}
     defaultOpenKeys={['sub1']}
     mode="inline"
