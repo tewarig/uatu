@@ -18,7 +18,7 @@ function App() {
 
   const fetchData = (value, filters, page , replace) => {
     // to check query time
-    setTime(Date.now());
+   const startTime = performance.now();
     // to check and remove empty filters
     const filterKeys = Object.keys(filters);
     const filteredFilters = {};
@@ -30,6 +30,12 @@ function App() {
     );
     setIsFetching(true);
     axiosInstance.get(`search?search=${value}&filter=${JSON.stringify(filteredFilters)}&page=${page}`).then((res) => {
+      if(res.data.error){
+        alert('oops! error occured. please try again');
+        setIsFetching(false);
+        setFilters({});
+        setSearchTerm('');
+      }
       if(res.data.data.length === 0 || res.data.data.length < 9){
         console.log("no more data");
         setHasMore(false);
@@ -42,7 +48,9 @@ function App() {
         setData(prevData => [...prevData, ...res.data.data]);
       }
       setIsFetching(false);
-      setTime(prevTime => Date.now() - prevTime);
+      const endTime = performance.now();
+      const duration = endTime - startTime; // in milliseconds
+      setTime(duration);
     });
   };
 
@@ -111,7 +119,7 @@ function App() {
        {data.length> 0 ? (<div style={{
             alignSelf: 'flex-start',
             marginTop: '16px',
-           }}> {!isFetching}showing top {data.length} result - found in {time/1000} sec</div>): null}
+           }}> {!isFetching}showing top {data.length} result - found in {time/1000} sec . scroll down to see more</div>): null}
             {
           data.length === 0 && !isFetching &&(searchTerm || isObject(filters)) ? <div > <h1 className='center' >No data found</h1 > <br/> <span className='center'>did you press the apply button in filters or search?</span></div> : null
         }
