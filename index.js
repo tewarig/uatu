@@ -4,6 +4,8 @@ const fs = require('fs'); // Importing the File System module
 const cors = require('cors');
 const app = express();
 const { logger , search } = require('./routes');
+require('dotenv').config()
+console.log(process.env) /
 
 // for ingestion of the log files
 app.use(cors());
