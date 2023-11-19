@@ -100,6 +100,12 @@ curl 'http://localhost:3000/search?search=error&filter=\{\}&page=1' \
 
 ✅ Search 
 
+✅ log copy
+
+# Small Video demo - 
+
+<Video src="./demo.mov" alt="demo video" >
+
 
 
 
