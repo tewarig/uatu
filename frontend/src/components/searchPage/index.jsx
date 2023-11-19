@@ -5,11 +5,12 @@ const { Search } = Input;
 const SearchPage = ({ 
     setSearchTerm,
     fetchData,
+    filters
 }) => {
   const onSearch = value => {
     console.log(value);
     setSearchTerm(value);
-    fetchData(value);
+    fetchData(value,filters);
   }
 
   return (

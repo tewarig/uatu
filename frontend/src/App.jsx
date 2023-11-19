@@ -10,20 +10,30 @@ import "./app.css";
 const {  Sider, Content  } = Layout;
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({});
   const [data, setData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
-  const fetchData = (value) => {
+  const fetchData = (value, filters) => {
+    // to check and remove empty filters
+    const filterKeys = Object.keys(filters);
+    const filteredFilters = {};
+    filterKeys.forEach((key) => {
+      if (filters[key]) {
+        filteredFilters[key] = filters[key];
+      }
+    }
+    );
     setIsFetching(true);
     setData([]);
-    axiosInstance.get(`search?search=${value}`).then((res) => {
+    axiosInstance.get(`search?search=${value}&filter=${JSON.stringify(filteredFilters)}`).then((res) => {
       setData(res.data.data);
       setIsFetching(false);
     });
   };
+ console.log(filters);
 
-
-  const fetchOnButtonClick = (value) => {
-    fetchData(value);
+  const fetchOnButtonClick = (value , filter) => {
+    fetchData(value, filter);
   };
   const getTimeFormat = (timestamp) => {
     const date = new Date(timestamp);
@@ -58,7 +68,6 @@ function App() {
       left: 0,
     }}>
     <Sider width={50}   className="site-layout-background">
-      <FilterMenu />
     </Sider>
     <Layout style={{ padding: '0 24px 24px', display: 'flex', flexDirection: 'row' }}>
       <Content
@@ -73,16 +82,23 @@ function App() {
         <SearchPage  
         setSearchTerm={setSearchTerm}
         fetchData={fetchOnButtonClick}
+        filters={filters}
         />
         <Row gutter={[16, 16]}>
         {
           isFetching ? Array(10).fill(null).map((_, index) => <Skeleton key={index} active />) : null
         }
         </Row>
+        <div style={{
+            alignSelf: 'flex-start',
+            marginTop: '16px',
+           }}> {!isFetching} {data.length} result found</div>
+       
         <Row gutter={[16, 16]} className='center' style={{
           overflow: 'scroll',
           height: '80vh',
         }}>
+
           {
             data.map((item) => (
               <Col  key={item.id}>
@@ -117,7 +133,11 @@ function App() {
           justifyContent: 'flex-end'
         }}>
         <div className='center'>
-          <h2>Filters</h2>
+        <FilterMenu  
+        searchValue={searchTerm}
+        filters={filters}
+        setFilters={setFilters}
+        fetchOnButtonClick={fetchOnButtonClick}/>
 
         </div>
       </Content>

@@ -5,6 +5,7 @@ const SQL_QUERY = {
     INSERT_LOGS_INTO_DATABASE: 'INSERT INTO logs (level, message,resourceId,timestamp,traceId,spanId,commit,metadata) VALUES ?',
     FULL_TEXT_SEARCH: "ALTER TABLE logs ADD FULLTEXT ft_index(level,message,resourceId,traceId,spanId,commit);",
     FULL_TEXT_SEARCH_QUERY : "SELECT * FROM `logs` WHERE MATCH(level, message, resourceId, traceId, spanId, commit) AGAINST(?)",
+    FILTER_QUERY: "SELECT * FROM `logs` WHERE "
 };
 
 module.exports = SQL_QUERY;
