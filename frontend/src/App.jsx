@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Input , Row , Col, Layout, Skeleton , Tag, Button} from 'antd';
-import axios from 'axios';
+import {   Row , Col, Layout, Skeleton , Tag, Button} from 'antd';
 import SearchPage from './components/searchPage';
 import FilterMenu from './components/filterMenu';
 import axiosInstance from '../axios';
@@ -13,7 +12,10 @@ function App() {
   const [filters, setFilters] = useState({});
   const [data, setData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [time ,setTime] = useState(0);
   const fetchData = (value, filters) => {
+    // to check query time
+    setTime(Date.now());
     // to check and remove empty filters
     const filterKeys = Object.keys(filters);
     const filteredFilters = {};
@@ -28,6 +30,7 @@ function App() {
     axiosInstance.get(`search?search=${value}&filter=${JSON.stringify(filteredFilters)}`).then((res) => {
       setData(res.data.data);
       setIsFetching(false);
+      setTime(prevTime => Date.now() - prevTime);
     });
   };
  console.log(filters);
@@ -92,7 +95,7 @@ function App() {
         <div style={{
             alignSelf: 'flex-start',
             marginTop: '16px',
-           }}> {!isFetching} {data.length} result found</div>
+           }}> {!isFetching} {data.length} result found - in {time/1000} sec</div>
        
         <Row gutter={[16, 16]} className='center' style={{
           overflow: 'scroll',
