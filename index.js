@@ -1,11 +1,12 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs'); // Importing the File System module
+const cors = require('cors');
 const app = express();
 const { logger , search } = require('./routes');
 
 // for ingestion of the log files
-
+app.use(cors());
 app.use(express.json()); // Add this line to parse JSON request bodies
 
 app.post('/log', logger); 

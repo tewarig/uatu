@@ -4,12 +4,14 @@ const SQL_QUERY = require('../../constants/queries');
 const search = (req, res) => {
     const queryParams = req.query;
     const search = queryParams.search;
+    const filter = queryParams.filter
     console.log(search);
-    const query = "SELECT * FROM `logs` WHERE MATCH(level, message, resourceId, traceId, spanId, commit) AGAINST(?)";
-    sqlConnection.query(query, [search], function (err, result) {
+    sqlConnection.query(SQL_QUERY.FULL_TEXT_SEARCH_QUERY, [search], function (err, result) {
         if (err) throw err;
         console.log(result);
-        res.send(result);
+        res.send({
+            data: result
+        });
     });
 };
 

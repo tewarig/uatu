@@ -20,7 +20,7 @@ const logger =  (req, res) => {
             traceId,
             spanId,
             commit,
-            metadata]
+            metadata?.parentResourceId]
         ];
         sqlConnection.query(sql, [values], function (err, result) {
           if (err) throw err;
