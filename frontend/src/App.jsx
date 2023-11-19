@@ -5,6 +5,7 @@ import FilterMenu from './components/filterMenu';
 import axiosInstance from '../axios';
 
 import "./app.css";
+import LogCard from './components/logCard';
 
 const {  Sider, Content  } = Layout;
 function App() {
@@ -13,7 +14,9 @@ function App() {
   const [data, setData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [time ,setTime] = useState(0);
-  const fetchData = (value, filters) => {
+  const [hasMore , setHasMore] = useState(true);
+
+  const fetchData = (value, filters, page , replace) => {
     // to check query time
     setTime(Date.now());
     // to check and remove empty filters
@@ -26,17 +29,26 @@ function App() {
     }
     );
     setIsFetching(true);
-    setData([]);
-    axiosInstance.get(`search?search=${value}&filter=${JSON.stringify(filteredFilters)}`).then((res) => {
-      setData(res.data.data);
+    axiosInstance.get(`search?search=${value}&filter=${JSON.stringify(filteredFilters)}&page=${page}`).then((res) => {
+      if(res.data.data.length === 0 || res.data.data.length < 9){
+        console.log("no more data");
+        setHasMore(false);
+        setData(prevData => [...prevData, ...res.data.data]);
+      }
+      if(replace){
+        setData(res.data.data);
+      }else {
+        console.log("no replace");
+        setData(prevData => [...prevData, ...res.data.data]);
+      }
       setIsFetching(false);
       setTime(prevTime => Date.now() - prevTime);
     });
   };
- console.log(filters);
 
-  const fetchOnButtonClick = (value , filter) => {
-    fetchData(value, filter);
+  const fetchOnButtonClick = (value , filter , page = 1, replace = true) => {
+    console.log(replace);
+    fetchData(value, filter , page , replace);
   };
   const getTimeFormat = (timestamp) => {
     const date = new Date(timestamp);
@@ -58,6 +70,9 @@ function App() {
     }
   };
   
+  const isObject = obj => {
+    return typeof obj === 'object' && obj !== null && !Array.isArray(obj) && Object.keys(obj).length > 0;
+  }
 
 
   return (
@@ -87,43 +102,31 @@ function App() {
         fetchData={fetchOnButtonClick}
         filters={filters}
         />
+        {}
         <Row gutter={[16, 16]}>
         {
-          isFetching ? Array(10).fill(null).map((_, index) => <Skeleton key={index} active />) : null
+         (isFetching && data.length === 0) ? Array(10).fill(null).map((_, index) => <Skeleton key={index} active />) : null
         }
         </Row>
-        <div style={{
+       {data.length> 0 ? (<div style={{
             alignSelf: 'flex-start',
             marginTop: '16px',
-           }}> {!isFetching} {data.length} result found - in {time/1000} sec</div>
+           }}> {!isFetching}showing top {data.length} result - found in {time/1000} sec</div>): null}
+            {
+          data.length === 0 && !isFetching &&(searchTerm || isObject(filters)) ? <div > <h1 className='center' >No data found</h1 > <br/> <span className='center'>did you press the apply button in filters or search?</span></div> : null
+        }
+
+           <LogCard
+            data={data}
+            copyToClipboard={copyToClipboard}
+            getTimeFormat={getTimeFormat}
+            fetchData={fetchOnButtonClick}
+            searchValue={searchTerm}
+            filters={filters}
+            hasMore={hasMore}
+           />
        
-        <Row gutter={[16, 16]} className='center' style={{
-          overflow: 'scroll',
-          height: '80vh',
-        }}>
-
-          {
-            data.map((item) => (
-              <Col  key={item.id}>
-                <div className="card">
-                  <div>
-                  <Tag color={item.level === "error" ? "red": "blue"}>{item.level}</Tag>
-                  <Tag color="grey">{item.message}</Tag>
-                  <Button onClick={()=>{copyToClipboard(item)}}> Copy log </Button>
-                  </div>
-
-                  <p>message:{item.message}</p>
-                  <p>resourceId: {item.resourceId} </p>
-                  <p>timestamp: {item.timestamp} -  <Tag>{getTimeFormat(item.timestamp)}</Tag>  </p>
-                  <p>traceId: {item.traceId} </p>
-                  <p>spanId: {item.spanId} </p>
-                  <p>commit: {item.commit} </p>
-                  <p>metadata.parentResourceId: {item.metadata} </p>
-                </div>
-              </Col>
-            ))
-          }
-        </Row>
+      
       </Content>
       <Content  
       className="site-layout-background"

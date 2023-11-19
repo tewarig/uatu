@@ -12,6 +12,9 @@ function convertMillisToSqlDate(millis) {
 const search = (req, res) => {
     const queryParams = req.query;
     const search = queryParams.search;
+    var page = parseInt(req.query.page) || 1;
+    var pageSize = parseInt(req.query.pageSize) || 10;
+    var offset = (page - 1) * pageSize;
     let filter = JSON.parse(queryParams.filter);
     if(filter == {} && search == ""){
         res.send({
@@ -40,6 +43,10 @@ const search = (req, res) => {
         if (conditions.length > 0) {
             queryString += "AND " + conditions.join(' AND ');
         }
+        queryString += conditions.join(' AND ');
+        queryString += " LIMIT ? OFFSET ?";
+        queryValues.push(pageSize);
+        queryValues.push(offset);
         sqlConnection.query(queryString, queryValues, function (err, result) {
             if (err) {
                 res.send({
@@ -54,7 +61,7 @@ const search = (req, res) => {
         });
 
     }else if(search){
-    sqlConnection.query(SQL_QUERY.FULL_TEXT_SEARCH_QUERY, [search], function (err, result) {
+    sqlConnection.query(SQL_QUERY.FULL_TEXT_SEARCH_QUERY, [search, pageSize, offset], function (err, result) {
         if (err) {
             res.send({
                 data: [] ,
@@ -87,6 +94,9 @@ const search = (req, res) => {
         }
     }
     queryString += conditions.join(' AND ');
+    queryString += " LIMIT ? OFFSET ?";
+    queryValues.push(pageSize);
+    queryValues.push(offset);
 
 
     sqlConnection.query(queryString, queryValues, function (err, result) {
