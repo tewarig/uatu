@@ -23,7 +23,7 @@ const logger =  (req, res) => {
             metadata?.parentResourceId]
         ];
         sqlConnection.query(sql, [values], function (err, result) {
-          if (err) throw err;
+          if (err) console.log(err);
           console.log("1 record inserted");
           console.log(result);
         });

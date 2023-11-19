@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
   });
 
   connection.connect(err => {
-    if (err) throw err;
+    if (err) console.log(err);
     console.log('Connected!');
   });
   const query = SQL_QUERY.CHECK_COUNT;
@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
 connection.query(query, (err, result) => {
   if (err) {
         connection.query(SQL_QUERY.CHECK_AND_CREATE_LOGS_TABLE, (err, result) => {
-            if (err) throw err;
+            if (err) console.log(err);
             console.log('Table created');
             connection.query(SQL_QUERY.FULL_TEXT_SEARCH, (err, result) => {
                 console.log('Full text search created');

@@ -100,7 +100,7 @@ const search = (req, res) => {
 
 
     sqlConnection.query(queryString, queryValues, function (err, result) {
-        if (err) throw err;
+        if (err) console.log(err);
         console.log(result);
         res.send({
             data: result
