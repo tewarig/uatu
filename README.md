@@ -9,6 +9,10 @@ Build with : -
 - Vite 
 - My SQL
 
+# why this project exits ?
+
+i needed a simple logger service for my project :) just to 
+
 # Getting Started
 ## Prerequisites
 A SQL server is required. For setting up a server, you can use tools like phpMyAdmin. [how to install my php admin](https://www.ionos.com/digitalguide/websites/web-development/install-phpmyadmin/)
@@ -101,10 +105,6 @@ curl 'http://localhost:3000/search?search=error&filter=\{\}&page=1' \
 ✅ Search 
 
 ✅ log copy
-
-# Small Video demo - 
-
-<Video src="./demo.mov" alt="demo video" >
 
 
 
